@@ -1,19 +1,3 @@
-<?php
-$conn = mysqli_connect('localhost', 'root', '', 'kontakty');
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
-    $id = $_POST['delete'];
-    $id1 = mysqli_real_escape_string($conn, $id);
-    $sql = "DELETE FROM kontakt WHERE id = '$id1'";
-    if (!mysqli_query($conn, $sql)) {
-        echo "Błąd podczas usuwania wpisu: " . mysqli_error($conn);
-    } else {
-        header("Location: {$_SERVER['PHP_SELF']}");
-        exit();
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="pl-PL">
 <head>
@@ -21,7 +5,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style4.css">
     <title>Wpisy</title>
-
 </head>
 <body>
 
@@ -34,61 +17,79 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
 
 <div id="tableContainer"></div>
 
+<button id="refreshButton">Odśwież Tabelę</button>
+
 <script>
-    var tableData = [
-        <?php 
-        $result = mysqli_query($conn, "SELECT * FROM kontakt");
-        if (!$result) {
-            die("Błąd pobierania danych z bazy danych: " . mysqli_error($conn));
+document.getElementById("refreshButton").addEventListener("click", function() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("tableContainer").innerHTML = this.responseText;
         }
-        while ($row = mysqli_fetch_array($result)): ?>
-            {
-                imie: '<?= $row['imie'] ?>',
-                nazwisko: '<?= $row['nazwisko'] ?>',
-                email: '<?= $row['email'] ?>',
-                nr_telefon: '<?= $row['nr_telefon'] ?>',
-                id: '<?= $row['id'] ?>',
-                img: '<?= $row['img'] ?>'
-            },
-        <?php endwhile; ?>
-    ];
-
-    var table = "<table border='1'>" +
-        "<tr>" +
-        "<th>Imię</th>" +
-        "<th>Nazwisko</th>" +
-        "<th>Email</th>" +
-        "<th>Numer telefonu</th>" +
-        "<th>id</th>" +
-        "<th>img</th>" +
-        "<th>usuń</th>" +
-        "</tr>";
-
-    for (var i = 0; i < tableData.length; i++) {
-        table += "<tr>" +
-            "<td>" + tableData[i].imie + "</td>" +
-            "<td>" + tableData[i].nazwisko + "</td>" +
-            "<td>" + tableData[i].email + "</td>" +
-            "<td>" + tableData[i].nr_telefon + "</td>" +
-            "<td>" + tableData[i].id + "</td>" +
-            "<td><img src='" + tableData[i].img + "' alt='Zdjęcie'></td>" +
-            "<td>" +
-            "<form method='post' action='<?php echo $_SERVER['PHP_SELF']; ?>'>" +
-            "<input type='hidden' name='delete' value='" + tableData[i].id + "'>" +
-            "<button type='submit' name='submit'>Usuń</button>" +
-            "</form>" +
-            "</td>" +
-            "</tr>";
-    }
-
-    table += "</table>";
-
-    document.getElementById('tableContainer').innerHTML = table;
+    };
+    xhr.open("GET", "<?php echo $_SERVER['PHP_SELF']; ?>?generate_table=true", true);
+    xhr.send();
+});
 </script>
 
-<?php 
-mysqli_close($conn);
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
+    $conn = mysqli_connect('localhost', 'root', '', 'kontakty');
+    $id = $_POST['delete'];
+    $id1 = mysqli_real_escape_string($conn, $id);
+    $sql = "DELETE FROM kontakt WHERE id = '$id1'";
+    if (!mysqli_query($conn, $sql)) {
+        echo "<script>alert('Błąd podczas usuwania wpisu: " . mysqli_error($conn) . "');</script>";
+    } else {
+        echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "';</script>";
+    }
+    mysqli_close($conn);
+}
 ?>
 
 </body>
 </html>
+
+<?php
+if (isset($_GET['generate_table']) && $_GET['generate_table'] == true) {
+    $conn = mysqli_connect('localhost', 'root', '', 'kontakty');
+
+    $table = "<table border='1'>" .
+        "<tr>" .
+        "<th>Imię</th>" .
+        "<th>Nazwisko</th>" .
+        "<th>Email</th>" .
+        "<th>Numer telefonu</th>" .
+        "<th>id</th>" .
+        "<th>img</th>" .
+        "<th>usuń</th>" .
+        "</tr>";
+
+    $result = mysqli_query($conn, "SELECT * FROM kontakt");
+    if (!$result) {
+        die("Błąd pobierania danych z bazy danych: " . mysqli_error($conn));
+    }
+    while ($row = mysqli_fetch_array($result)) {
+        $table .= "<tr>" .
+            "<td>" . $row['imie'] . "</td>" .
+            "<td>" . $row['nazwisko'] . "</td>" .
+            "<td>" . $row['email'] . "</td>" .
+            "<td>" . $row['nr_telefon'] . "</td>" .
+            "<td>" . $row['id'] . "</td>" .
+            "<td><img src='" . $row['img'] . "' alt='Zdjęcie'></td>" .
+            "<td>" .
+            "<form method='post' action='" . $_SERVER['PHP_SELF'] . "'>" .
+            "<input type='hidden' name='delete' value='" . $row['id'] . "'>" .
+            "<button type='submit' name='submit'>Usuń</button>" .
+            "</form>" .
+            "</td>" .
+            "</tr>";
+    }
+
+    $table .= "</table>";
+
+    echo $table;
+
+    mysqli_close($conn);
+}
+?>
