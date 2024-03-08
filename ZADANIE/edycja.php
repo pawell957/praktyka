@@ -51,9 +51,17 @@ if (!$result) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
     <title>Edycja wpisu</title>
 </head>
 <body>
+<div id="banner">
+        <a href="rejestracja.php">Rejestracja</a>
+        <a href="logowanie.php">Logowanie</a>
+        <a href="kontakt.php">Kontakt</a>
+        <a href="edycja.php">Edycja</a>
+        <a href="podstrona.php">Usuwanie</a>
+    </div>
     
     <h1>Edycja wpisu</h1>
     <table border="1">
