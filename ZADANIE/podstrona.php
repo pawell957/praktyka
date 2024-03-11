@@ -17,7 +17,7 @@
 
 <div id="tableContainer"></div>
 
-<button id="refreshButton">Odśwież Tabelę</button>
+<button id="refreshButton">Wyświetl tabelę</button>
 
 <script>
 document.getElementById("refreshButton").addEventListener("click", function() {
