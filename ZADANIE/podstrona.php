@@ -17,10 +17,10 @@
 
 <div id="tableContainer"></div>
 
-<button id="refreshButton">Wyświetl tabelę</button>
+<button id="wyswietl">Wyświetl tabelę</button>
 
 <script>
-document.getElementById("refreshButton").addEventListener("click", function() {
+document.getElementById("wyswietl").addEventListener("click", function() {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
