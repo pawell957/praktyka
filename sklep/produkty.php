@@ -71,7 +71,7 @@
     <?php
     $conn = mysqli_connect('localhost', 'root', '', 'sklep');
 
-    // Pobierz wszystkie produkty
+    
     $sql = "SELECT * FROM produkty";
     $result = mysqli_query($conn, $sql);
 
@@ -98,23 +98,23 @@
 
     <script>
         function addToCart(productId) {
-            // Pobierz aktualną zawartość koszyka lub utwórz nowy koszyk, jeśli jest pusty
+           
             var cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-            // Sprawdź, czy produkt jest już w koszyku
+            
             var found = cart.find(item => item.productId === productId);
 
-            // Jeśli produkt jest już w koszyku, zwiększ jego ilość, w przeciwnym razie dodaj go do koszyka
+           
             if (found) {
                 found.quantity++;
             } else {
                 cart.push({ productId: productId, quantity: 1 });
             }
 
-            // Zapisz koszyk zaktualizowany w pamięci przeglądarki
+            
             localStorage.setItem('cart', JSON.stringify(cart));
 
-            // Powiadom użytkownika, że produkt został dodany do koszyka
+            
             alert("Produkt dodany do koszyka!");
         }
     </script>
