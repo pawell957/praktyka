@@ -44,7 +44,6 @@
         <h1>Koszyk</h1>
 
         <div id="cart">
-            <!-- Tutaj zostaną wyświetlone produkty w koszyku -->
         </div>
 
         <p><a href="produkty.php">Wróć do sklepu</a></p>
