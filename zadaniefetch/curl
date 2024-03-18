@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+<form method="post">
+    <button type="submit" name="getEntry">koty</button>
+</form>
+<br/>
+<div id="image"></div>
+
+<script>
+    document.querySelector('button[name="getEntry"]').addEventListener('click', function(event) {
+        event.preventDefault(); 
+
+        getEntry();
+    });
+
+    function getEntry() {
+        const imageContainer = document.getElementById('image');
+
+        if (imageContainer.querySelector('img')) {
+            return; 
+        }
+
+        const image = document.createElement('img');
+        image.src = '<?php echo getImageSrc("https://cataas.com/cat"); ?>';
+        image.alt = 'cat';
+
+        imageContainer.appendChild(image);
+    }
+</script>
+
+<?php
+function getImageSrc($url) {
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = curl_exec($ch);
+
+    curl_close($ch);
+
+    $imageInfo = getimagesize($url);
+
+    if ($imageInfo !== false) {
+        
+        return $url;
+    } else {
+        
+        return '';
+    }
+}
+?>
+</body>
+</html>
